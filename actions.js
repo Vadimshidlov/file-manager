@@ -1,42 +1,26 @@
-import * as fsPromises from "node:fs/promises";
-import path from "path";
+import * as fsPromises from 'node:fs/promises';
+import path from 'path';
+import filesSortCallback from './libs/fs/filesSortCallback.js';
+import getFilesNames from './libs/fs/getFilesNames.js';
 
 export default class Actions {
   async ls(currentPath) {
-    console.log(path, `path that i pass into ls`);
-
     try {
-      const getFilesNames = async (currentPathTwo) => {
-        const result = [];
-
-        const data = await fsPromises.readdir(currentPathTwo, {
-          withFileTypes: true,
-        });
-
-        for (let file of data) {
-          if (file.isFile()) {
-            result.push(file.name);
-          }
-
-          /* if (file.isFile()) {
-            result.push(file.name);
-          } else if (file.isDirectory()) {
-            const nestedFiles = await getFilesNames(
-              path.join(currentPathTwo, file.name)
-            );
-
-            result.push(...nestedFiles);
-          } */
-        }
-
-        return result;
-      };
-
-      const finalData = await getFilesNames(currentPath);
+      const finalData = (await getFilesNames(currentPath)).sort(filesSortCallback);
 
       console.table(finalData);
+      console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
-      throw Error("FS operation failed");
+      throw Error('FS operation failed');
+    }
+  }
+
+  cd(toPath) {
+    try {
+      process.chdir(toPath);
+      console.log(`You are currently in ${process.cwd()}\n`);
+    } catch (error) {
+      console.log('Invalid input');
     }
   }
 }
