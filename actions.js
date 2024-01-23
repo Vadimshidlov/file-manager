@@ -1,5 +1,6 @@
 import * as fsPromises from "node:fs/promises";
 import * as os from "os";
+import { createReadStream } from "fs";
 import filesSortCallback from "./libs/fs/filesSortCallback.js";
 import getFilesNames from "./libs/fs/getFilesNames.js";
 import path from "path";
@@ -13,7 +14,7 @@ export default class Actions {
   async ls(currentPath) {
     try {
       const finalData = (await getFilesNames(currentPath)).sort(
-        filesSortCallback,
+        filesSortCallback
       );
 
       console.table(finalData);
@@ -49,8 +50,30 @@ export default class Actions {
     } catch (error) {
       console.log("Invalid input");
     }
+  }
 
-    /*console.log(toPath, "toPath");
+  cat(filePath) {
+    try {
+      console.log(filePath, `filePath from cat`);
+
+      const readStream = createReadStream(filePath);
+
+      readStream.on("error", (err) => {
+        console.log("Invalid input\n");
+      });
+
+      readStream.pipe(process.stdout).on("error", (err) => {
+        console.log("Invalid input from pipe\n");
+      });
+    } catch (error) {
+      console.log("Invalid input\n");
+    }
+  }
+}
+
+/*
+    // for up function
+    console.log(toPath, "toPath");
 
     let futurePath;
 
@@ -70,6 +93,5 @@ export default class Actions {
 
     console.log(2);
 
-    process.chdir(futurePath);*/
-  }
-}
+    process.chdir(futurePath);
+    */
