@@ -11,6 +11,45 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default class Actions {
+  constructor(name) {
+    console.log(name, `name from constructor`);
+    this.userName = name;
+  }
+
+  /*  getUserName() {
+    const startArgument = process.argv.slice(2);
+    const startNameIndex = startArgument[0].indexOf("=");
+
+    const userName = startArgument[0].slice(
+      startNameIndex !== -1 ? startNameIndex + 1 : 0
+    );
+
+    return userName;
+  } */
+
+  start() {
+    /* const startArgument = process.argv.slice(2);
+    const startNameIndex = startArgument[0].indexOf("=");
+
+    const userName = startArgument[0].slice(
+      startNameIndex !== -1 ? startNameIndex + 1 : 0
+    ); */
+
+    const homeDir = os.homedir();
+
+    process.chdir(homeDir);
+
+    console.log(`Welcome to the File Manager, ${this.userName}!\n`);
+
+    console.log(`You are currently in ${process.cwd()}\n`);
+  }
+
+  end() {
+    console.log(
+      `Thank you for using File Manager, ${this.userName}, goodbye! `
+    );
+  }
+
   async ls(currentPath) {
     try {
       const finalData = (await getFilesNames(currentPath)).sort(
@@ -69,6 +108,8 @@ export default class Actions {
       console.log("Invalid input\n");
     }
   }
+
+  add(fileName) {}
 }
 
 /*
