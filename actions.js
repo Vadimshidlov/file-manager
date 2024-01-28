@@ -1,10 +1,10 @@
-import * as fsPromises from "node:fs/promises";
-import * as os from "os";
-import { createReadStream } from "fs";
-import filesSortCallback from "./libs/fs/filesSortCallback.js";
-import getFilesNames from "./libs/fs/getFilesNames.js";
-import path from "path";
-import { fileURLToPath } from "url";
+import * as fsPromises from 'node:fs/promises';
+import * as os from 'os';
+import { createReadStream } from 'fs';
+import filesSortCallback from './libs/fs/filesSortCallback.js';
+import getFilesNames from './libs/fs/getFilesNames.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -16,25 +16,7 @@ export default class Actions {
     this.userName = name;
   }
 
-  /*  getUserName() {
-    const startArgument = process.argv.slice(2);
-    const startNameIndex = startArgument[0].indexOf("=");
-
-    const userName = startArgument[0].slice(
-      startNameIndex !== -1 ? startNameIndex + 1 : 0
-    );
-
-    return userName;
-  } */
-
   start() {
-    /* const startArgument = process.argv.slice(2);
-    const startNameIndex = startArgument[0].indexOf("=");
-
-    const userName = startArgument[0].slice(
-      startNameIndex !== -1 ? startNameIndex + 1 : 0
-    ); */
-
     const homeDir = os.homedir();
 
     process.chdir(homeDir);
@@ -45,21 +27,17 @@ export default class Actions {
   }
 
   end() {
-    console.log(
-      `Thank you for using File Manager, ${this.userName}, goodbye! `
-    );
+    console.log(`Thank you for using File Manager, ${this.userName}, goodbye! `);
   }
 
   async ls(currentPath) {
     try {
-      const finalData = (await getFilesNames(currentPath)).sort(
-        filesSortCallback
-      );
+      const finalData = (await getFilesNames(currentPath)).sort(filesSortCallback);
 
       console.table(finalData);
       console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
-      throw Error("FS operation failed");
+      throw Error('FS operation failed');
     }
   }
 
@@ -72,13 +50,13 @@ export default class Actions {
       process.chdir(toPath);
       console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
-      console.log("Invalid input");
+      console.log('Invalid input');
     }
   }
 
   up(toPath) {
     try {
-      let futurePath = path.join(process.cwd(), "../");
+      let futurePath = path.join(process.cwd(), '../');
 
       if (futurePath === os.homedir()) {
         return;
@@ -87,7 +65,7 @@ export default class Actions {
       process.chdir(futurePath);
       console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
-      console.log("Invalid input");
+      console.log('Invalid input');
     }
   }
 
@@ -97,42 +75,39 @@ export default class Actions {
 
       const readStream = createReadStream(filePath);
 
-      readStream.on("error", (err) => {
-        console.log("Invalid input\n");
+      readStream.on('error', (err) => {
+        console.log('Invalid input\n');
       });
 
-      readStream.pipe(process.stdout).on("error", (err) => {
-        console.log("Invalid input from pipe\n");
+      readStream.pipe(process.stdout).on('error', (err) => {
+        console.log('Invalid input from pipe\n');
+      });
+
+      readStream.on('end', () => {
+        console.log(`\nYou are currently in ${process.cwd()}\n`);
       });
     } catch (error) {
-      console.log("Invalid input\n");
+      console.log('Invalid input\n');
     }
   }
 
-  add(fileName) {}
+  async add(fileName) {
+    try {
+      try {
+        const go = process.cwd();
+
+        const newFilePath = path.join(process.cwd(), fileName);
+
+        await fsPromises.writeFile(newFilePath, '', { flag: 'wx+' });
+
+        console.log(`\nYou are currently in ${process.cwd()}\n`);
+      } catch (e) {
+        throw new Error('Invalid input\n');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+    }
+  }
 }
-
-/*
-    // for up function
-    console.log(toPath, "toPath");
-
-    let futurePath;
-
-    if (os.platform() === "win32") {
-      const currentArr = toPath.split("/");
-
-      futurePath = currentArr.slice(0, currentArr.length - 2).join("/");
-
-      console.log(futurePath, "futurePath");
-    }
-
-    if (futurePath === os.homedir()) {
-      return;
-    }
-
-    console.log(futurePath);
-
-    console.log(2);
-
-    process.chdir(futurePath);
-    */
