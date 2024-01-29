@@ -5,7 +5,7 @@ import path from 'path';
 export default class AppController {
   constructor(process) {
     this.process = process;
-    this.osActions = new OSActions();
+    this.osActions = new OSActions(process);
     this.fsActions = new FSActions();
   }
 
