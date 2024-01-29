@@ -11,9 +11,8 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
-export default class Actions {
+export default class FSActions {
   constructor(name) {
-    console.log(name, `name from constructor`);
     this.userName = name;
   }
 
@@ -242,6 +241,22 @@ export default class Actions {
       }
     }
   }
-}
 
-// cp E:\LENOVO_LEGION\JS-learn-2.0\RS-SCHOOL\test-file-manager\1234.txt E:\LENOVO_LEGION\JS-learn-2.0\RS-SCHOOL\test-file-manager2
+  async rm(pathToFile) {
+    try {
+      await fsPromises.access(pathToFile);
+    } catch (error) {
+      throw Error('Invalid input\n');
+    }
+
+    try {
+      await fsPromises.rm(pathToFile);
+
+      console.log(`\nYou are currently in ${process.cwd()}\n`);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error);
+      }
+    }
+  }
+}
