@@ -1,5 +1,5 @@
 import * as os from 'os';
-import Actions from './actions.js';
+import Actions from './FSActions.js';
 import path from 'path';
 import getUserName from './libs/start/getUserName.js';
 import OpetationSystem from './os.js';

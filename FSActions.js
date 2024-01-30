@@ -1,5 +1,7 @@
 import * as fsPromises from 'node:fs/promises';
 import * as os from 'os';
+import * as fs from 'node:fs';
+import crypto from 'crypto';
 import { createReadStream, createWriteStream } from 'fs';
 import filesSortCallback from './libs/fs/filesSortCallback.js';
 import getFilesNames from './libs/fs/getFilesNames.js';
@@ -256,6 +258,41 @@ export default class FSActions {
     } catch (error) {
       if (error instanceof Error) {
         console.log(error);
+      }
+    }
+  }
+
+  async calcHash(pathToFile) {
+    try {
+      const createHash = async () => {
+        const hash = crypto.createHash('sha256');
+        const content = fs.createReadStream(PATH_TO_FILE);
+
+        return new Promise((resolve, reject) => {
+          content.on('readable', () => {
+            const data = content.read();
+
+            if (data) {
+              hash.update(data);
+            } else {
+              resolve(hash.digest('hex'));
+            }
+          });
+
+          content.on('error', reject);
+        });
+      };
+
+      try {
+        const hash = await createHash();
+        console.log(hash);
+      } catch (error) {
+        // console.log(error);
+        throw new Error('Invalid input');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
       }
     }
   }

@@ -1,4 +1,4 @@
-import FSActions from '../actions.js';
+import FSActions from '../FSActions.js';
 import OSActions from '../os.js';
 import path from 'path';
 
@@ -22,6 +22,12 @@ export default class AppController {
       const toPath = this.process.cwd();
 
       this.fsActions.up(toPath);
+    }
+
+    if (command.startsWith('hash')) {
+      const pathToFile = command.split(' ')[1];
+
+      this.fsActions.calcHash(pathToFile);
     }
 
     if (command.startsWith('cd')) {
