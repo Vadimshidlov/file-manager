@@ -1,14 +1,10 @@
-import * as os from "os";
 import FSActions from "./modules/FSActions.js";
-import path from "path";
 import getUserName from "./libs/start/getUserName.js";
-import OpetationSystem from "./modules/OSActions.js";
 import AppController from "./modules/AppController.js";
 
 const appController = new AppController(process);
 
 const actions = new FSActions(getUserName());
-const osActions = new OpetationSystem();
 
 actions.start();
 

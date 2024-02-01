@@ -2,12 +2,14 @@ import FSActions from "./FSActions.js";
 import pathResolver from "../libs/fs/pathResolver.js";
 import OSActions from "./OSActions.js";
 import path from "path";
+import { GzipActions } from "./GzipActions.js";
 
 export default class AppController {
   constructor(process) {
     this.process = process;
     this.osActions = new OSActions(process);
     this.fsActions = new FSActions();
+    this.gzipActions = new GzipActions();
   }
 
   action(command) {
@@ -111,8 +113,20 @@ export default class AppController {
 
       const [pathToFile, pathToCompressFIle] = pathResolver(command);
 
+      console.log(pathToFile, pathToCompressFIle);
+
       (async () => {
-        await this.fsActions.rm(pathToFile, pathToCompressFIle);
+        await this.gzipActions.compress(pathToFile, pathToCompressFIle);
+      })();
+    }
+
+    if (command.startsWith("decompress")) {
+      // const pathToFile = command.split(" ")[1];
+
+      const [pathToFile, pathToCompressFIle] = pathResolver(command);
+
+      (async () => {
+        await this.gzipActions.decompress(pathToFile, pathToCompressFIle);
       })();
     }
 
