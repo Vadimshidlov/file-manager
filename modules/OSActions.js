@@ -28,23 +28,23 @@ export default class OSActions {
   }
 
   printArchitecture() {
-    console.log(`\n${os.arch()}\n`);
+    console.log(`\n${os.arch()}`);
     // getCurrentDir(this.process);
   }
 
   printUsername() {
-    console.log(`\n${os.hostname()}\n`);
+    console.log(`\n${os.hostname()}`);
     // getCurrentDir(this.process);
   }
 
   getHomedir() {
-    console.log(`\n${os.homedir()}\n`);
+    console.log(`\n${os.homedir()}`);
     // getCurrentDir(this.process);
   }
 
   getEol() {
     console.log(JSON.stringify(os.EOL));
-    console.log(os.EOL);
+    // console.log(os.EOL);
     // getCurrentDir(this.process);
   }
 
