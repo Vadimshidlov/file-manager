@@ -18,30 +18,36 @@ export default class FSActions {
     this.userName = name;
   }
 
+  sayWhereAmI() {
+    console.log(`\nYou are currently in ${process.cwd()}\n`);
+  }
+
   start() {
     const homeDir = os.homedir();
-
     process.chdir(homeDir);
 
-    console.log(`Welcome to the File Manager, ${this.userName}!\n`);
+    console.log(`Welcome to the File Manager, ${this.userName}!`);
 
-    console.log(`You are currently in ${process.cwd()}\n`);
+    // console.log(`You are currently in ${process.cwd()}\n`);
+    this.sayWhereAmI();
   }
 
   end() {
     console.log(
-      `\nThank you for using File Manager, ${this.userName}, goodbye!`
+      `\nThank you for using File Manager, ${this.userName}, goodbye!`,
     );
   }
 
   async ls(currentPath) {
     try {
       const finalData = (await getFilesNames(currentPath)).sort(
-        filesSortCallback
+        filesSortCallback,
       );
 
       console.table(finalData);
-      console.log(`You are currently in ${process.cwd()}\n`);
+      // console.log(`You are currently in ${process.cwd()}\n`);
+
+      // this.sayWhereAmI();
     } catch (error) {
       throw Error("FS operation failed");
     }
@@ -54,7 +60,7 @@ export default class FSActions {
       }
 
       process.chdir(toPath);
-      console.log(`You are currently in ${process.cwd()}\n`);
+      // console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
       console.log("Invalid input");
     }
@@ -69,7 +75,7 @@ export default class FSActions {
       }
 
       process.chdir(futurePath);
-      console.log(`You are currently in ${process.cwd()}\n`);
+      // console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
       console.log("Invalid input");
     }
@@ -77,7 +83,7 @@ export default class FSActions {
 
   cat(filePath) {
     try {
-      console.log(filePath, `filePath from cat`);
+      // console.log(filePath, `filePath from cat`);
 
       const readStream = createReadStream(filePath);
 
@@ -106,7 +112,7 @@ export default class FSActions {
 
         await fsPromises.writeFile(newFilePath, "", { flag: "wx+" });
 
-        console.log(`\nYou are currently in ${process.cwd()}\n`);
+        // console.log(`\nYou are currently in ${process.cwd()}\n`);
       } catch (e) {
         throw new Error("Invalid input\n");
       }
@@ -118,7 +124,7 @@ export default class FSActions {
   }
 
   async rn(pathToFile, newName) {
-    console.log(pathToFile, newName, `pathToFile, newName rn`);
+    // console.log(pathToFile, newName, `pathToFile, newName rn`);
     try {
       const currentPath = path.resolve(pathToFile);
 
@@ -152,7 +158,7 @@ export default class FSActions {
 
         await fsPromises.rename(currentPath, futurePath);
 
-        console.log(`\nYou are currently in ${process.cwd()}\n`);
+        // console.log(`\nYou are currently in ${process.cwd()}\n`);
       } catch (error) {
         if (error instanceof Error) {
           console.log(error);
@@ -166,86 +172,94 @@ export default class FSActions {
   }
 
   async cp(pathToFile, newPathToFile) {
-    const fileName = path.basename(pathToFile);
-
-    const newFilePath = path.join(newPathToFile, fileName);
-
     try {
-      await fsPromises.access(pathToFile);
-    } catch (error) {
-      throw Error("Invalid input\n");
-    }
+      const fileName = path.basename(pathToFile);
 
-    // check does the future file already exist?
-    try {
-      await fsPromises.access(newFilePath);
+      const newFilePath = path.join(newPathToFile, fileName);
 
-      throw new Error("Invalid input\n");
-    } catch (error) {
-      if (error instanceof Error && error.message === "Invalid input\n") {
-        console.log("2");
-
-        throw error;
+      try {
+        await fsPromises.access(pathToFile);
+      } catch (error) {
+        throw Error("Invalid input\n");
       }
-    }
 
-    try {
-      // create empty file;
-      await fsPromises.writeFile(newFilePath, "", { flag: "wx+" });
+      // check does the future file already exist?
+      try {
+        await fsPromises.access(newFilePath);
 
-      const readStream = createReadStream(pathToFile);
-      const writableStream = createWriteStream(newFilePath);
+        throw new Error("Invalid input\n");
+      } catch (error) {
+        if (error instanceof Error && error.message === "Invalid input\n") {
+          console.log("2");
 
-      await pipeline(readStream, writableStream);
-
-      console.log(`\nYou are currently in ${process.cwd()}\n`);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error);
+          throw error;
+        }
       }
+
+      try {
+        // create empty file;
+        await fsPromises.writeFile(newFilePath, "", { flag: "wx+" });
+
+        const readStream = createReadStream(pathToFile);
+        const writableStream = createWriteStream(newFilePath);
+
+        await pipeline(readStream, writableStream);
+
+        // console.log(`\nYou are currently in ${process.cwd()}\n`);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(error);
+        }
+      }
+    } catch (e) {
+      console.log(e.message);
     }
   }
 
   async mv(pathToFile, newPathToFile) {
-    const fileName = path.basename(pathToFile);
-
-    const newFilePath = path.join(newPathToFile, fileName);
-
     try {
-      await fsPromises.access(pathToFile);
-    } catch (error) {
-      throw Error("Invalid input\n");
-    }
+      const fileName = path.basename(pathToFile);
 
-    // check does the future file already exist?
-    try {
-      await fsPromises.access(newFilePath);
+      const newFilePath = path.join(newPathToFile, fileName);
 
-      throw new Error("Invalid input\n");
-    } catch (error) {
-      if (error instanceof Error && error.message === "Invalid input\n") {
-        console.log("2");
-
-        throw error;
+      try {
+        await fsPromises.access(pathToFile);
+      } catch (error) {
+        throw Error("Invalid input\n");
       }
-    }
 
-    try {
-      // create empty file;
-      await fsPromises.writeFile(newFilePath, "", { flag: "wx+" });
+      // check does the future file already exist?
+      try {
+        await fsPromises.access(newFilePath);
 
-      const readStream = createReadStream(pathToFile);
-      const writableStream = createWriteStream(newFilePath);
+        throw new Error("Invalid input\n");
+      } catch (error) {
+        if (error instanceof Error && error.message === "Invalid input\n") {
+          console.log("2");
 
-      await pipeline(readStream, writableStream);
-
-      await fsPromises.rm(pathToFile);
-
-      console.log(`\nYou are currently in ${process.cwd()}\n`);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error);
+          throw error;
+        }
       }
+
+      try {
+        // create empty file;
+        await fsPromises.writeFile(newFilePath, "", { flag: "wx+" });
+
+        const readStream = createReadStream(pathToFile);
+        const writableStream = createWriteStream(newFilePath);
+
+        await pipeline(readStream, writableStream);
+
+        await fsPromises.rm(pathToFile);
+
+        // console.log(`\nYou are currently in ${process.cwd()}\n`);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.log(error);
+        }
+      }
+    } catch (e) {
+      console.log(e.message);
     }
   }
 
@@ -259,7 +273,7 @@ export default class FSActions {
     try {
       await fsPromises.rm(pathToFile);
 
-      console.log(`\nYou are currently in ${process.cwd()}\n`);
+      // console.log(`\nYou are currently in ${process.cwd()}\n`);
     } catch (error) {
       if (error instanceof Error) {
         console.log(error);
@@ -271,7 +285,7 @@ export default class FSActions {
     try {
       const createHash = async () => {
         const hash = crypto.createHash("sha256");
-        const content = fs.createReadStream(PATH_TO_FILE);
+        const content = fs.createReadStream(pathToFile);
 
         return new Promise((resolve, reject) => {
           content.on("readable", () => {
@@ -290,9 +304,8 @@ export default class FSActions {
 
       try {
         const hash = await createHash();
-        console.log(hash);
+        console.log(`\n${hash}`);
       } catch (error) {
-        // console.log(error);
         throw new Error("Invalid input");
       }
     } catch (error) {

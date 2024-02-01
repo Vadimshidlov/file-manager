@@ -6,46 +6,46 @@ export default class OSActions {
     this.process = process;
   }
 
-  action(parametr) {
-    if (parametr === "--EOL") {
+  action(parameter) {
+    if (parameter === "--EOL") {
       this.getEol();
     }
 
-    if (parametr === "--cpus") {
+    if (parameter === "--cpus") {
       this.getCpus();
     }
 
-    if (parametr === "--homedir") {
+    if (parameter === "--homedir") {
       this.getHomedir();
     }
 
-    if (parametr === "--username") {
+    if (parameter === "--username") {
       this.printUsername();
     }
-    if (parametr === "--architecture") {
+    if (parameter === "--architecture") {
       this.printArchitecture();
     }
   }
 
   printArchitecture() {
     console.log(`\n${os.arch()}\n`);
-    getCurrentDir(this.process);
+    // getCurrentDir(this.process);
   }
 
   printUsername() {
     console.log(`\n${os.hostname()}\n`);
-    getCurrentDir(this.process);
+    // getCurrentDir(this.process);
   }
 
   getHomedir() {
     console.log(`\n${os.homedir()}\n`);
-    getCurrentDir(this.process);
+    // getCurrentDir(this.process);
   }
 
   getEol() {
     console.log(JSON.stringify(os.EOL));
     console.log(os.EOL);
-    getCurrentDir(this.process);
+    // getCurrentDir(this.process);
   }
 
   getCpus() {
@@ -61,6 +61,6 @@ export default class OSActions {
     console.log(`\nThere are ${cpusData.length} CPUS\n`);
 
     console.table(cpusData);
-    getCurrentDir(this.process);
+    // getCurrentDir(this.process);
   }
 }

@@ -5,135 +5,139 @@ import path from "path";
 import { GzipActions } from "./GzipActions.js";
 
 export default class AppController {
-  constructor(process) {
+  constructor(process, name) {
     this.process = process;
     this.osActions = new OSActions(process);
-    this.fsActions = new FSActions();
+    this.fsActions = new FSActions(name);
     this.gzipActions = new GzipActions();
   }
 
-  action(command) {
+  start() {
+    this.fsActions.start();
+  }
+
+  end() {
+    this.fsActions.end();
+  }
+
+  async action(command) {
     if (command === ".exit") {
       this.fsActions.end();
       this.process.exit(0);
     }
 
     if (command === "ls") {
-      this.fsActions.ls(path.resolve(process.cwd()));
+      await this.fsActions.ls(path.resolve(process.cwd()));
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command === "up") {
       const toPath = this.process.cwd();
 
       this.fsActions.up(toPath);
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("hash")) {
-      // const pathToFile = command.split(" ")[1];
-
       const [pathToFile] = pathResolver(command);
 
-      this.fsActions.calcHash(pathToFile);
+      await this.fsActions.calcHash(pathToFile);
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("cd")) {
-      // const toPath = command.split(' ')[1];
       const [toPath] = pathResolver(command);
 
-      console.log(toPath, `toPath from cd`);
-
       this.fsActions.cd(toPath);
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("cat")) {
-      // const toPath = command.split(" ")[1];
-
       const [toPath] = pathResolver(command);
 
       this.fsActions.cat(toPath);
     }
 
     if (command.startsWith("add")) {
-      // const fileName = command.split(" ")[1];
-
       const [fileName] = pathResolver(command);
 
-      (async () => {
+      await (async () => {
         await this.fsActions.add(path.basename(fileName));
       })();
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("rn")) {
-      // const pathToFile = command.split(" ")[1];
-      // const newFileName = command.split(" ")[2];
-
       const [pathToFile, newFileName] = pathResolver(command);
 
-      // console.log(path.basename(newFileName), `newFileName from rn`);
-
-      (async () => {
+      await (async () => {
         await this.fsActions.rn(pathToFile, path.basename(newFileName));
       })();
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("cp")) {
-      /* const pathToFile = command.split(" ")[1];
-      const newPathToFile = command.split(" ")[2]; */
-
       const [pathToFile, newPathToFile] = pathResolver(command);
 
-      (async () => {
+      await (async () => {
         await this.fsActions.cp(pathToFile, newPathToFile);
       })();
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("mv")) {
-      /* const pathToFile = command.split(" ")[1];
-      const newPathToFile = command.split(" ")[2]; */
-
       const [pathToFile, newPathToFile] = pathResolver(command);
 
-      (async () => {
+      await (async () => {
         await this.fsActions.mv(pathToFile, newPathToFile);
       })();
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("rm")) {
-      // const pathToFile = command.split(" ")[1];
-
       const [pathToFile] = pathResolver(command);
 
-      (async () => {
+      await (async () => {
         await this.fsActions.rm(pathToFile);
       })();
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("compress")) {
-      // const pathToFile = command.split(" ")[1];
-
       const [pathToFile, pathToCompressFIle] = pathResolver(command);
 
       console.log(pathToFile, pathToCompressFIle);
 
-      (async () => {
+      await (async () => {
         await this.gzipActions.compress(pathToFile, pathToCompressFIle);
       })();
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("decompress")) {
-      // const pathToFile = command.split(" ")[1];
-
       const [pathToFile, pathToCompressFIle] = pathResolver(command);
 
-      (async () => {
+      await (async () => {
         await this.gzipActions.decompress(pathToFile, pathToCompressFIle);
       })();
+
+      this.fsActions.sayWhereAmI();
     }
 
     if (command.startsWith("os")) {
       const osArgument = command.split(" ")[1];
 
       this.osActions.action(osArgument);
+
+      this.fsActions.sayWhereAmI();
     }
   }
 }
