@@ -1,6 +1,7 @@
-import FSActions from '../FSActions.js';
-import OSActions from '../os.js';
-import path from 'path';
+import FSActions from "./FSActions.js";
+import pathResolver from "../libs/fs/pathResolver.js";
+import OSActions from "./OSActions.js";
+import path from "path";
 
 export default class AppController {
   constructor(process) {
@@ -10,83 +11,113 @@ export default class AppController {
   }
 
   action(command) {
-    if (command === '.exit') {
+    if (command === ".exit") {
+      this.fsActions.end();
       this.process.exit(0);
     }
 
-    if (command === 'ls') {
+    if (command === "ls") {
       this.fsActions.ls(path.resolve(process.cwd()));
     }
 
-    if (command === 'up') {
+    if (command === "up") {
       const toPath = this.process.cwd();
 
       this.fsActions.up(toPath);
     }
 
-    if (command.startsWith('hash')) {
-      const pathToFile = command.split(' ')[1];
+    if (command.startsWith("hash")) {
+      // const pathToFile = command.split(" ")[1];
+
+      const [pathToFile] = pathResolver(command);
 
       this.fsActions.calcHash(pathToFile);
     }
 
-    if (command.startsWith('cd')) {
-      const toPath = command.split(' ')[1];
+    if (command.startsWith("cd")) {
+      // const toPath = command.split(' ')[1];
+      const [toPath] = pathResolver(command);
+
+      console.log(toPath, `toPath from cd`);
 
       this.fsActions.cd(toPath);
     }
 
-    if (command.startsWith('cat')) {
-      const toPath = command.split(' ')[1];
+    if (command.startsWith("cat")) {
+      // const toPath = command.split(" ")[1];
+
+      const [toPath] = pathResolver(command);
 
       this.fsActions.cat(toPath);
     }
 
-    if (command.startsWith('add')) {
-      const fileName = command.split(' ')[1];
+    if (command.startsWith("add")) {
+      // const fileName = command.split(" ")[1];
+
+      const [fileName] = pathResolver(command);
 
       (async () => {
-        await this.fsActions.add(fileName);
+        await this.fsActions.add(path.basename(fileName));
       })();
     }
 
-    if (command.startsWith('rn')) {
-      const pathToFile = command.split(' ')[1];
-      const newFileName = command.split(' ')[2];
+    if (command.startsWith("rn")) {
+      // const pathToFile = command.split(" ")[1];
+      // const newFileName = command.split(" ")[2];
+
+      const [pathToFile, newFileName] = pathResolver(command);
+
+      // console.log(path.basename(newFileName), `newFileName from rn`);
 
       (async () => {
-        await this.fsActions.rn(pathToFile, newFileName);
+        await this.fsActions.rn(pathToFile, path.basename(newFileName));
       })();
     }
 
-    if (command.startsWith('cp')) {
-      const pathToFile = command.split(' ')[1];
-      const newPathToFile = command.split(' ')[2];
+    if (command.startsWith("cp")) {
+      /* const pathToFile = command.split(" ")[1];
+      const newPathToFile = command.split(" ")[2]; */
+
+      const [pathToFile, newPathToFile] = pathResolver(command);
 
       (async () => {
         await this.fsActions.cp(pathToFile, newPathToFile);
       })();
     }
 
-    if (command.startsWith('mv')) {
-      const pathToFile = command.split(' ')[1];
-      const newPathToFile = command.split(' ')[2];
+    if (command.startsWith("mv")) {
+      /* const pathToFile = command.split(" ")[1];
+      const newPathToFile = command.split(" ")[2]; */
+
+      const [pathToFile, newPathToFile] = pathResolver(command);
 
       (async () => {
         await this.fsActions.mv(pathToFile, newPathToFile);
       })();
     }
 
-    if (command.startsWith('rm')) {
-      const pathToFile = command.split(' ')[1];
+    if (command.startsWith("rm")) {
+      // const pathToFile = command.split(" ")[1];
+
+      const [pathToFile] = pathResolver(command);
 
       (async () => {
         await this.fsActions.rm(pathToFile);
       })();
     }
 
-    if (command.startsWith('os')) {
-      const osArgument = command.split(' ')[1];
+    if (command.startsWith("compress")) {
+      // const pathToFile = command.split(" ")[1];
+
+      const [pathToFile, pathToCompressFIle] = pathResolver(command);
+
+      (async () => {
+        await this.fsActions.rm(pathToFile, pathToCompressFIle);
+      })();
+    }
+
+    if (command.startsWith("os")) {
+      const osArgument = command.split(" ")[1];
 
       this.osActions.action(osArgument);
     }

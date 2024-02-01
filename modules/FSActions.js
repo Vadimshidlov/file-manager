@@ -1,13 +1,13 @@
-import * as fsPromises from 'node:fs/promises';
-import * as os from 'os';
-import * as fs from 'node:fs';
-import crypto from 'crypto';
-import { createReadStream, createWriteStream } from 'fs';
-import filesSortCallback from './libs/fs/filesSortCallback.js';
-import getFilesNames from './libs/fs/getFilesNames.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { pipeline } from 'node:stream/promises';
+import * as fsPromises from "node:fs/promises";
+import * as os from "os";
+import * as fs from "node:fs";
+import crypto from "crypto";
+import { createReadStream, createWriteStream } from "fs";
+import filesSortCallback from "../libs/fs/filesSortCallback.js";
+import getFilesNames from "../libs/fs/getFilesNames.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import { pipeline } from "node:stream/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -29,17 +29,21 @@ export default class FSActions {
   }
 
   end() {
-    console.log(`Thank you for using File Manager, ${this.userName}, goodbye! `);
+    console.log(
+      `\nThank you for using File Manager, ${this.userName}, goodbye!`
+    );
   }
 
   async ls(currentPath) {
     try {
-      const finalData = (await getFilesNames(currentPath)).sort(filesSortCallback);
+      const finalData = (await getFilesNames(currentPath)).sort(
+        filesSortCallback
+      );
 
       console.table(finalData);
       console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
-      throw Error('FS operation failed');
+      throw Error("FS operation failed");
     }
   }
 
@@ -52,13 +56,13 @@ export default class FSActions {
       process.chdir(toPath);
       console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
-      console.log('Invalid input');
+      console.log("Invalid input");
     }
   }
 
   up(toPath) {
     try {
-      let futurePath = path.join(process.cwd(), '../');
+      let futurePath = path.join(process.cwd(), "../");
 
       if (futurePath === os.homedir()) {
         return;
@@ -67,7 +71,7 @@ export default class FSActions {
       process.chdir(futurePath);
       console.log(`You are currently in ${process.cwd()}\n`);
     } catch (error) {
-      console.log('Invalid input');
+      console.log("Invalid input");
     }
   }
 
@@ -77,19 +81,19 @@ export default class FSActions {
 
       const readStream = createReadStream(filePath);
 
-      readStream.on('error', (err) => {
-        console.log('Invalid input\n');
+      readStream.on("error", (err) => {
+        console.log("Invalid input\n");
       });
 
-      readStream.pipe(process.stdout).on('error', (err) => {
-        console.log('Invalid input from pipe\n');
+      readStream.pipe(process.stdout).on("error", (err) => {
+        console.log("Invalid input from pipe\n");
       });
 
-      readStream.on('end', () => {
+      readStream.on("end", () => {
         console.log(`\nYou are currently in ${process.cwd()}\n`);
       });
     } catch (error) {
-      console.log('Invalid input\n');
+      console.log("Invalid input\n");
     }
   }
 
@@ -100,11 +104,11 @@ export default class FSActions {
 
         const newFilePath = path.join(process.cwd(), fileName);
 
-        await fsPromises.writeFile(newFilePath, '', { flag: 'wx+' });
+        await fsPromises.writeFile(newFilePath, "", { flag: "wx+" });
 
         console.log(`\nYou are currently in ${process.cwd()}\n`);
       } catch (e) {
-        throw new Error('Invalid input\n');
+        throw new Error("Invalid input\n");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -114,25 +118,26 @@ export default class FSActions {
   }
 
   async rn(pathToFile, newName) {
+    console.log(pathToFile, newName, `pathToFile, newName rn`);
     try {
       const currentPath = path.resolve(pathToFile);
 
-      let futurePath = path.join(pathToFile, '../', newName);
+      let futurePath = path.join(pathToFile, "../", newName);
 
       // check does the current file already exist?
       try {
         await fsPromises.access(pathToFile);
       } catch (error) {
-        throw Error('Invalid input\n');
+        throw Error("Invalid input\n");
       }
 
       // check does the future file already exist?
       try {
         await fsPromises.access(futurePath);
 
-        throw new Error('Invalid input\n');
+        throw new Error("Invalid input\n");
       } catch (error) {
-        if (error instanceof Error && error.message === 'Invalid input\n') {
+        if (error instanceof Error && error.message === "Invalid input\n") {
           throw error;
         }
       }
@@ -142,7 +147,7 @@ export default class FSActions {
         const fileStat = await fsPromises.stat(currentPath);
 
         if (fileStat.isDirectory()) {
-          throw new Error('Invalid input\n');
+          throw new Error("Invalid input\n");
         }
 
         await fsPromises.rename(currentPath, futurePath);
@@ -168,17 +173,17 @@ export default class FSActions {
     try {
       await fsPromises.access(pathToFile);
     } catch (error) {
-      throw Error('Invalid input\n');
+      throw Error("Invalid input\n");
     }
 
     // check does the future file already exist?
     try {
       await fsPromises.access(newFilePath);
 
-      throw new Error('Invalid input\n');
+      throw new Error("Invalid input\n");
     } catch (error) {
-      if (error instanceof Error && error.message === 'Invalid input\n') {
-        console.log('2');
+      if (error instanceof Error && error.message === "Invalid input\n") {
+        console.log("2");
 
         throw error;
       }
@@ -186,7 +191,7 @@ export default class FSActions {
 
     try {
       // create empty file;
-      await fsPromises.writeFile(newFilePath, '', { flag: 'wx+' });
+      await fsPromises.writeFile(newFilePath, "", { flag: "wx+" });
 
       const readStream = createReadStream(pathToFile);
       const writableStream = createWriteStream(newFilePath);
@@ -209,17 +214,17 @@ export default class FSActions {
     try {
       await fsPromises.access(pathToFile);
     } catch (error) {
-      throw Error('Invalid input\n');
+      throw Error("Invalid input\n");
     }
 
     // check does the future file already exist?
     try {
       await fsPromises.access(newFilePath);
 
-      throw new Error('Invalid input\n');
+      throw new Error("Invalid input\n");
     } catch (error) {
-      if (error instanceof Error && error.message === 'Invalid input\n') {
-        console.log('2');
+      if (error instanceof Error && error.message === "Invalid input\n") {
+        console.log("2");
 
         throw error;
       }
@@ -227,7 +232,7 @@ export default class FSActions {
 
     try {
       // create empty file;
-      await fsPromises.writeFile(newFilePath, '', { flag: 'wx+' });
+      await fsPromises.writeFile(newFilePath, "", { flag: "wx+" });
 
       const readStream = createReadStream(pathToFile);
       const writableStream = createWriteStream(newFilePath);
@@ -248,7 +253,7 @@ export default class FSActions {
     try {
       await fsPromises.access(pathToFile);
     } catch (error) {
-      throw Error('Invalid input\n');
+      throw Error("Invalid input\n");
     }
 
     try {
@@ -265,21 +270,21 @@ export default class FSActions {
   async calcHash(pathToFile) {
     try {
       const createHash = async () => {
-        const hash = crypto.createHash('sha256');
+        const hash = crypto.createHash("sha256");
         const content = fs.createReadStream(PATH_TO_FILE);
 
         return new Promise((resolve, reject) => {
-          content.on('readable', () => {
+          content.on("readable", () => {
             const data = content.read();
 
             if (data) {
               hash.update(data);
             } else {
-              resolve(hash.digest('hex'));
+              resolve(hash.digest("hex"));
             }
           });
 
-          content.on('error', reject);
+          content.on("error", reject);
         });
       };
 
@@ -288,7 +293,7 @@ export default class FSActions {
         console.log(hash);
       } catch (error) {
         // console.log(error);
-        throw new Error('Invalid input');
+        throw new Error("Invalid input");
       }
     } catch (error) {
       if (error instanceof Error) {

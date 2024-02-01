@@ -1,5 +1,5 @@
-import * as os from 'os';
-import getCurrentDir from './libs/fs/getCurrentDir.js';
+import * as os from "os";
+import getCurrentDir from "../libs/fs/getCurrentDir.js";
 
 export default class OSActions {
   constructor(process) {
@@ -7,22 +7,22 @@ export default class OSActions {
   }
 
   action(parametr) {
-    if (parametr === '--EOL') {
+    if (parametr === "--EOL") {
       this.getEol();
     }
 
-    if (parametr === '--cpus') {
+    if (parametr === "--cpus") {
       this.getCpus();
     }
 
-    if (parametr === '--homedir') {
+    if (parametr === "--homedir") {
       this.getHomedir();
     }
 
-    if (parametr === '--username') {
+    if (parametr === "--username") {
       this.printUsername();
     }
-    if (parametr === '--architecture') {
+    if (parametr === "--architecture") {
       this.printArchitecture();
     }
   }
@@ -52,7 +52,7 @@ export default class OSActions {
     const cpusData = os.cpus().reduce((acc, el) => {
       acc.push({
         Model: el.model,
-        'Clock Rate (GHz)': el.speed / 1000,
+        "Clock Rate (GHz)": el.speed / 1000,
       });
 
       return acc;
