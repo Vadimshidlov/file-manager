@@ -1,3 +1,16 @@
+## Spaces in paths
+
+Dear user, if you want to use spaces in your paths, you just need to wrap your path into one 
+of three types of double-quotes. ("...", '...', `...`)
+
+For example: 
+
+cd "E:/documents/docs for rs_school/node-js/task one"
+
+or:
+
+rn E:/documents/docs/123.txt "12 34 56.txt"
+
 # Assignment: File Manager
 
 ## Description
