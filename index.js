@@ -1,12 +1,7 @@
-import FSActions from "./modules/FSActions.js";
 import getUserName from "./libs/start/getUserName.js";
 import AppController from "./modules/AppController.js";
 
-// const appController = new AppController(process);
 const appController = new AppController(process, getUserName());
-
-// const actions = new FSActions(getUserName());
-// const actions = new FSActions(getUserName());
 
 appController.start();
 
@@ -21,8 +16,6 @@ process.on("beforeExit", () => {
 });
 
 process.on("SIGINT", () => {
-  // actions.end();
-
   appController.end();
   process.exit(0);
 });

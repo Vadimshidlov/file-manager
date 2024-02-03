@@ -37,7 +37,6 @@ function singleQuotePath(path) {
     const quotesPath = path.slice(firstQuoteIndex + 1, lastQuoteIndex);
     const basicPath = path.slice(lastQuoteIndex + 2, path.length);
 
-    console.log("Resolver cause 1");
     return [quotesPath, basicPath]
       .filter((el) => el !== "")
       .map((path) => {
@@ -70,7 +69,6 @@ function singleQuotePath(path) {
     const basicPath = path.slice(
       firstSpaceIndex + 1,
       secondPathFirstQouteIndex - 1,
-      // secondPathFirstQouteIndex - 2
     );
 
     console.log("Resolver cause 2");
@@ -87,7 +85,6 @@ function singleQuotePath(path) {
 }
 
 export default function pathResolver(path) {
-  // console.log(path, "path");
   let isPathHasQuote = false;
   let coutesCount = 0;
 
@@ -107,29 +104,18 @@ export default function pathResolver(path) {
 
     const singlePath = path.slice(pathFirstIndex);
 
-    // return [singlePath];
-
     if (nodePath.isAbsolute(singlePath)) {
-      console.log("Resolver cause 3");
       return [singlePath];
     } else {
       const convertToAbsolutePath = nodePath.join(process.cwd(), singlePath);
 
-      console.log("Resolver cause 4");
-
       return [convertToAbsolutePath];
     }
-
-    // return [singlePath];
   }
 
   if ((isPathHasQuote && coutesCount === 4) || !isPathHasQuote) {
     if (coutesCount === 4) {
       const [pathOne, pathTwo] = extractStrings(path);
-
-      // return [pathOne, pathTwo];
-
-      console.log("Resolver cause 5");
 
       return [pathOne, pathTwo].map((path) => {
         if (!nodePath.isAbsolute(path)) {
@@ -143,9 +129,6 @@ export default function pathResolver(path) {
     } else {
       const args = path.split(" ");
 
-      // return [args[1], args[2]];
-
-      console.log("Resolver cause 6");
       return [args[1], args[2]].map((path) => {
         if (nodePath.isAbsolute(path)) {
           const convertToAbsolutePath = nodePath.join(process.cwd(), path);
@@ -162,15 +145,3 @@ export default function pathResolver(path) {
     return singleQuotePath(path);
   }
 }
-
-/* console.log(pathResolver(`rn "asdf/asd e123/asdds.txt"`));
-
-console.log(pathResolver(`rn asdf/asde123/asdds.txt`));
-
-console.log(pathResolver(`rn "asd/ asdasd.txt" asdf/asde123/asd ds.txt`));
-
-console.log(pathResolver(`rn asd/asdasd.txt "asdf/asde 123/asd ds.txt"`)); */
-
-// console.log(pathResolver(`rn "asd/asd asd.txt" "asdf/asde 123/asd ds.txt"`));
-
-// console.log(pathResolver(`rn asdasd/asd.txt asdasdasd/asdasdasd/123.txt`));

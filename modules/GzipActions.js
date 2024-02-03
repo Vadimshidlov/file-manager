@@ -1,4 +1,9 @@
-import { createGzip, createUnzip } from "zlib";
+import {
+  createGzip,
+  createUnzip,
+  createBrotliCompress,
+  createBrotliDecompress,
+} from "zlib";
 import { createReadStream, createWriteStream } from "node:fs";
 import { rm } from "node:fs/promises";
 import { pipeline } from "node:stream/promises";
@@ -7,27 +12,27 @@ import path from "path";
 export class GzipActions {
   async compress(pathToFile, pathToCompressFile) {
     try {
-      console.log("compress 1");
-
-      const futureFileName = `${path.basename(pathToFile)}.gz`;
+      const futureFileName = `${path.basename(pathToFile)}.br`;
 
       const readStream = createReadStream(pathToFile);
       const writeStream = createWriteStream(
         path.join(pathToCompressFile, futureFileName),
       );
-      const gzip = createGzip();
 
-      console.log("compress 2");
+      const brotliCompress = createBrotliCompress();
 
       try {
-        await pipeline(readStream, gzip, writeStream);
-        console.log("compress 3");
+        await pipeline(readStream, brotliCompress, writeStream);
 
-        await rm(pathToFile);
-        console.log("compress 4");
+        console.log("Success Brotli-compress");
+
+        // await rm(pathToFile);
+
+        // console.log("Success Brotli-compress");
       } catch (error) {
-        console.log(error);
-        // throw new Error("Invalid input\n");
+        console.log("Brotli compress error");
+
+        throw new Error("Operation failed");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -37,8 +42,6 @@ export class GzipActions {
   }
 
   async decompress(pathToCompressFile, futurePathToFile) {
-    console.log(pathToCompressFile, futurePathToFile);
-
     try {
       const fileBaseName = path.basename(pathToCompressFile);
 
@@ -51,20 +54,16 @@ export class GzipActions {
 
       const readStream = createReadStream(pathToCompressFile);
 
-      console.log("1");
       const writeStream = createWriteStream(
         path.join(futurePathToFile, futureFileName),
       );
-      console.log("2");
 
-      const unzip = createUnzip();
-      console.log("3");
+      const decompressBrotli = createBrotliDecompress();
 
       try {
-        console.log("4");
+        await pipeline(readStream, decompressBrotli, writeStream);
 
-        await pipeline(readStream, unzip, writeStream);
-        console.log("5");
+        console.log("Success decompress");
 
         await rm(pathToCompressFile);
       } catch (error) {

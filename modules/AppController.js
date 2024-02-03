@@ -140,8 +140,6 @@ export default class AppController {
     if (command.startsWith("compress")) {
       const [pathToFile, pathToCompressFIle] = pathResolver(command);
 
-      console.log(pathToFile, pathToCompressFIle);
-
       await (async () => {
         await this.gzipActions.compress(pathToFile, pathToCompressFIle);
       })();

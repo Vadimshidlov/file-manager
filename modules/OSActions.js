@@ -1,5 +1,4 @@
 import * as os from "os";
-import getCurrentDir from "../libs/fs/getCurrentDir.js";
 
 export default class OSActions {
   constructor(process) {
