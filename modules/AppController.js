@@ -20,6 +20,14 @@ export default class AppController {
     this.fsActions.end();
   }
 
+  unknownCommand() {
+    try {
+      throw new Error("\nInvalid input\n");
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   async action(command) {
     if (command === ".exit") {
       this.fsActions.end();
@@ -30,6 +38,8 @@ export default class AppController {
       await this.fsActions.ls(path.resolve(process.cwd()));
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command === "up") {
@@ -38,6 +48,8 @@ export default class AppController {
       this.fsActions.up(toPath);
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("hash")) {
@@ -45,6 +57,8 @@ export default class AppController {
 
       await this.fsActions.calcHash(pathToFile);
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("cd")) {
@@ -52,12 +66,16 @@ export default class AppController {
 
       this.fsActions.cd(toPath);
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("cat")) {
       const [toPath] = pathResolver(command);
 
       this.fsActions.cat(toPath);
+
+      return;
     }
 
     if (command.startsWith("add")) {
@@ -68,6 +86,8 @@ export default class AppController {
       })();
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("rn")) {
@@ -78,6 +98,8 @@ export default class AppController {
       })();
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("cp")) {
@@ -88,6 +110,8 @@ export default class AppController {
       })();
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("mv")) {
@@ -98,6 +122,8 @@ export default class AppController {
       })();
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("rm")) {
@@ -108,6 +134,7 @@ export default class AppController {
       })();
 
       this.fsActions.sayWhereAmI();
+      return;
     }
 
     if (command.startsWith("compress")) {
@@ -120,6 +147,8 @@ export default class AppController {
       })();
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("decompress")) {
@@ -130,6 +159,8 @@ export default class AppController {
       })();
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
 
     if (command.startsWith("os")) {
@@ -138,6 +169,10 @@ export default class AppController {
       this.osActions.action(osArgument);
 
       this.fsActions.sayWhereAmI();
+
+      return;
     }
+
+    this.unknownCommand();
   }
 }
