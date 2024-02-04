@@ -40,16 +40,22 @@ export default class FSActions {
 
   async ls(currentPath) {
     try {
-      const finalData = (await getFilesNames(currentPath)).sort(
-        filesSortCallback,
-      );
+      try {
+        const finalData = (await getFilesNames(currentPath)).sort(
+          filesSortCallback,
+        );
 
-      console.table(finalData);
-      // console.log(`You are currently in ${process.cwd()}\n`);
+        console.table(finalData);
+        // console.log(`You are currently in ${process.cwd()}\n`);
 
-      // this.sayWhereAmI();
+        // this.sayWhereAmI();
+      } catch (error) {
+        throw Error("Operation failed");
+      }
     } catch (error) {
-      throw Error("FS operation failed");
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
     }
   }
 
@@ -84,11 +90,14 @@ export default class FSActions {
   cat(filePath) {
     try {
       // console.log(filePath, `filePath from cat`);
+      /*if (!filePath) {
+        throw new Error("\nInvalid input\n");
+      }*/
 
       const readStream = createReadStream(filePath);
 
       readStream.on("error", (err) => {
-        console.log("Invalid input\n");
+        console.log("\nOperation failed\n");
       });
 
       readStream.pipe(process.stdout).on("error", (err) => {
@@ -98,8 +107,17 @@ export default class FSActions {
       readStream.on("end", () => {
         console.log(`\nYou are currently in ${process.cwd()}\n`);
       });
+
+      /*readStream.on("error", () => {
+          // console.log(`\nYou are currently in ${process.cwd()}\n`);
+
+          throw new Error("\nOperation failed");
+        });*/
     } catch (error) {
-      console.log("Invalid input\n");
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+      // console.log("Invalid input\n");
     }
   }
 

@@ -1,7 +1,7 @@
 import getUserName from "./libs/start/getUserName.js";
 import AppController from "./modules/AppController.js";
 
-const appController = new AppController(process, getUserName());
+const appController = new AppController(process, getUserName() || "Anonymous");
 
 appController.start();
 

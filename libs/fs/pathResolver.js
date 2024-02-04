@@ -85,63 +85,76 @@ function singleQuotePath(path) {
 }
 
 export default function pathResolver(path) {
-  let isPathHasQuote = false;
-  let coutesCount = 0;
+  try {
+    try {
+      let isPathHasQuote = false;
+      let coutesCount = 0;
 
-  const quotes = ["'", "`", '"'];
+      const quotes = ["'", "`", '"'];
 
-  for (let i = 0; i < path.length; i += 1) {
-    const current = path[i];
+      for (let i = 0; i < path.length; i += 1) {
+        const current = path[i];
 
-    if (quotes.includes(current)) {
-      isPathHasQuote = true;
-      coutesCount += 1;
-    }
-  }
-
-  if (!isPathHasQuote && path.split(" ").length === 2) {
-    const pathFirstIndex = path.indexOf(" ") + 1;
-
-    const singlePath = path.slice(pathFirstIndex);
-
-    if (nodePath.isAbsolute(singlePath)) {
-      return [singlePath];
-    } else {
-      const convertToAbsolutePath = nodePath.join(process.cwd(), singlePath);
-
-      return [convertToAbsolutePath];
-    }
-  }
-
-  if ((isPathHasQuote && coutesCount === 4) || !isPathHasQuote) {
-    if (coutesCount === 4) {
-      const [pathOne, pathTwo] = extractStrings(path);
-
-      return [pathOne, pathTwo].map((path) => {
-        if (!nodePath.isAbsolute(path)) {
-          const convertToAbsolutePath = nodePath.join(process.cwd(), path);
-
-          return convertToAbsolutePath;
+        if (quotes.includes(current)) {
+          isPathHasQuote = true;
+          coutesCount += 1;
         }
+      }
 
-        return path;
-      });
-    } else {
-      const args = path.split(" ");
+      if (!isPathHasQuote && path.split(" ").length === 2) {
+        const pathFirstIndex = path.indexOf(" ") + 1;
 
-      return [args[1], args[2]].map((path) => {
-        if (nodePath.isAbsolute(path)) {
-          const convertToAbsolutePath = nodePath.join(process.cwd(), path);
+        const singlePath = path.slice(pathFirstIndex);
 
-          return convertToAbsolutePath;
+        if (nodePath.isAbsolute(singlePath)) {
+          return [singlePath];
+        } else {
+          const convertToAbsolutePath = nodePath.join(
+            process.cwd(),
+            singlePath,
+          );
+
+          return [convertToAbsolutePath];
         }
+      }
 
-        return path;
-      });
+      if ((isPathHasQuote && coutesCount === 4) || !isPathHasQuote) {
+        if (coutesCount === 4) {
+          const [pathOne, pathTwo] = extractStrings(path);
+
+          return [pathOne, pathTwo].map((path) => {
+            if (!nodePath.isAbsolute(path)) {
+              const convertToAbsolutePath = nodePath.join(process.cwd(), path);
+
+              return convertToAbsolutePath;
+            }
+
+            return path;
+          });
+        } else {
+          const args = path.split(" ");
+
+          return [args[1], args[2]].map((path) => {
+            if (nodePath.isAbsolute(path)) {
+              const convertToAbsolutePath = nodePath.join(process.cwd(), path);
+
+              return convertToAbsolutePath;
+            }
+
+            return path;
+          });
+        }
+      }
+
+      if (isPathHasQuote && coutesCount === 2) {
+        return singleQuotePath(path);
+      }
+    } catch (error) {
+      throw new Error("\nInvalid input\n");
     }
-  }
-
-  if (isPathHasQuote && coutesCount === 2) {
-    return singleQuotePath(path);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
   }
 }

@@ -1,38 +1,40 @@
-import {
-  createGzip,
-  createUnzip,
-  createBrotliCompress,
-  createBrotliDecompress,
-} from "zlib";
+import { createBrotliCompress, createBrotliDecompress } from "zlib";
 import { createReadStream, createWriteStream } from "node:fs";
 import { rm } from "node:fs/promises";
 import { pipeline } from "node:stream/promises";
 import path from "path";
+import * as fsPromises from "node:fs/promises";
 
 export class GzipActions {
   async compress(pathToFile, pathToCompressFile) {
     try {
       const futureFileName = `${path.basename(pathToFile)}.br`;
+      const futureFilePath = path.join(pathToCompressFile, futureFileName);
 
-      const readStream = createReadStream(pathToFile);
-      const writeStream = createWriteStream(
-        path.join(pathToCompressFile, futureFileName),
-      );
+      // check is destination file already exist before decompressing
+      try {
+        await fsPromises.access(futureFilePath);
 
-      const brotliCompress = createBrotliCompress();
+        throw new Error("\nOperation failed");
+      } catch (error) {
+        if (error.message === "\nOperation failed") {
+          console.log(error.message);
+
+          return;
+        }
+      }
 
       try {
+        const readStream = createReadStream(pathToFile);
+        const writeStream = createWriteStream(futureFilePath);
+
+        const brotliCompress = createBrotliCompress();
+
         await pipeline(readStream, brotliCompress, writeStream);
 
-        console.log("Success Brotli-compress");
-
-        // await rm(pathToFile);
-
-        // console.log("Success Brotli-compress");
+        await rm(pathToFile);
       } catch (error) {
-        console.log("Brotli compress error");
-
-        throw new Error("Operation failed");
+        throw new Error("\nOperation failed");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -50,25 +52,35 @@ export class GzipActions {
         fileBaseName.lastIndexOf("."),
       );
 
-      console.log(futureFileName, `futureFileName`);
+      const futureFilePath = path.join(futurePathToFile, futureFileName);
 
-      const readStream = createReadStream(pathToCompressFile);
+      // check is destination file already exist before decompressing
+      try {
+        await fsPromises.access(futureFilePath);
 
-      const writeStream = createWriteStream(
-        path.join(futurePathToFile, futureFileName),
-      );
+        throw new Error("\nOperation failed");
+      } catch (error) {
+        if (error.message === "\nOperation failed") {
+          console.log(error.message);
 
-      const decompressBrotli = createBrotliDecompress();
+          return;
+        }
+      }
 
       try {
+        const readStream = createReadStream(pathToCompressFile);
+
+        const writeStream = createWriteStream(futureFilePath);
+
+        const decompressBrotli = createBrotliDecompress();
+
         await pipeline(readStream, decompressBrotli, writeStream);
 
         console.log("Success decompress");
 
         await rm(pathToCompressFile);
       } catch (error) {
-        console.log(error);
-        // throw new Error("Invalid input\n");
+        throw new Error("\nOperation failed");
       }
     } catch (error) {
       if (error instanceof Error) {

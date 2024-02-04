@@ -71,7 +71,13 @@ export default class AppController {
     }
 
     if (command.startsWith("cat")) {
-      const [toPath] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        return;
+      }
+
+      const [toPath] = params;
 
       this.fsActions.cat(toPath);
 
@@ -79,7 +85,14 @@ export default class AppController {
     }
 
     if (command.startsWith("add")) {
-      const [fileName] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        return;
+      }
+
+      // const [fileName] = pathResolver(command);
+      const [fileName] = params;
 
       await (async () => {
         await this.fsActions.add(path.basename(fileName));
