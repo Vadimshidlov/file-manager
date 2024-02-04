@@ -22,9 +22,11 @@ export default class AppController {
 
   unknownCommand() {
     try {
-      throw new Error("\nInvalid input\n");
+      throw new Error("\nInvalid input");
     } catch (error) {
       console.log(error.message);
+
+      this.fsActions.sayWhereAmI();
     }
   }
 
@@ -53,7 +55,15 @@ export default class AppController {
     }
 
     if (command.startsWith("hash")) {
-      const [pathToFile] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      const [pathToFile] = params;
 
       await this.fsActions.calcHash(pathToFile);
       this.fsActions.sayWhereAmI();
@@ -62,9 +72,18 @@ export default class AppController {
     }
 
     if (command.startsWith("cd")) {
-      const [toPath] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      const [toPath] = params;
 
       this.fsActions.cd(toPath);
+
       this.fsActions.sayWhereAmI();
 
       return;
@@ -74,12 +93,16 @@ export default class AppController {
       const params = pathResolver(command);
 
       if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
         return;
       }
 
       const [toPath] = params;
 
-      this.fsActions.cat(toPath);
+      await this.fsActions.cat(toPath);
+
+      // this.fsActions.sayWhereAmI();
 
       return;
     }
@@ -88,10 +111,11 @@ export default class AppController {
       const params = pathResolver(command);
 
       if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
         return;
       }
 
-      // const [fileName] = pathResolver(command);
       const [fileName] = params;
 
       await (async () => {
@@ -104,7 +128,22 @@ export default class AppController {
     }
 
     if (command.startsWith("rn")) {
-      const [pathToFile, newFileName] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      if (params.length !== 2) {
+        console.log("\nInvalid input");
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      const [pathToFile, newFileName] = params;
 
       await (async () => {
         await this.fsActions.rn(pathToFile, path.basename(newFileName));
@@ -116,7 +155,23 @@ export default class AppController {
     }
 
     if (command.startsWith("cp")) {
-      const [pathToFile, newPathToFile] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      if (params.length !== 2) {
+        console.log("\nInvalid input");
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      const [pathToFile, newPathToFile] = params;
+      // const [pathToFile, newPathToFile] = pathResolver(command);
 
       await (async () => {
         await this.fsActions.cp(pathToFile, newPathToFile);
@@ -128,7 +183,23 @@ export default class AppController {
     }
 
     if (command.startsWith("mv")) {
-      const [pathToFile, newPathToFile] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      if (params.length !== 2) {
+        console.log("\nInvalid input");
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      const [pathToFile, newPathToFile] = params;
+      // const [pathToFile, newPathToFile] = pathResolver(command);
 
       await (async () => {
         await this.fsActions.mv(pathToFile, newPathToFile);
@@ -140,7 +211,17 @@ export default class AppController {
     }
 
     if (command.startsWith("rm")) {
-      const [pathToFile] = pathResolver(command);
+      //!
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      const [pathToFile] = params;
+      // const [pathToFile] = pathResolver(command);
 
       await (async () => {
         await this.fsActions.rm(pathToFile);
@@ -151,7 +232,23 @@ export default class AppController {
     }
 
     if (command.startsWith("compress")) {
-      const [pathToFile, pathToCompressFIle] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      if (params.length !== 2) {
+        console.log("\nInvalid input");
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      const [pathToFile, pathToCompressFIle] = params;
+      // const [pathToFile, pathToCompressFIle] = pathResolver(command);
 
       await (async () => {
         await this.gzipActions.compress(pathToFile, pathToCompressFIle);
@@ -163,7 +260,23 @@ export default class AppController {
     }
 
     if (command.startsWith("decompress")) {
-      const [pathToFile, pathToCompressFIle] = pathResolver(command);
+      const params = pathResolver(command);
+
+      if (!Array.isArray(params)) {
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      if (params.length !== 2) {
+        console.log("\nInvalid input");
+        this.fsActions.sayWhereAmI();
+
+        return;
+      }
+
+      const [pathToFile, pathToCompressFIle] = params;
+      // const [pathToFile, pathToCompressFIle] = pathResolver(command);
 
       await (async () => {
         await this.gzipActions.decompress(pathToFile, pathToCompressFIle);

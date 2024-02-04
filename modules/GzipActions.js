@@ -6,6 +6,10 @@ import path from "path";
 import * as fsPromises from "node:fs/promises";
 
 export class GzipActions {
+  constructor() {
+    this.errorMessage = "\nOperation failed";
+  }
+
   async compress(pathToFile, pathToCompressFile) {
     try {
       const futureFileName = `${path.basename(pathToFile)}.br`;
@@ -15,9 +19,9 @@ export class GzipActions {
       try {
         await fsPromises.access(futureFilePath);
 
-        throw new Error("\nOperation failed");
+        throw new Error(this.errorMessage);
       } catch (error) {
-        if (error.message === "\nOperation failed") {
+        if (error.message === this.errorMessage) {
           console.log(error.message);
 
           return;
@@ -34,7 +38,7 @@ export class GzipActions {
 
         await rm(pathToFile);
       } catch (error) {
-        throw new Error("\nOperation failed");
+        throw new Error(this.errorMessage);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -58,9 +62,9 @@ export class GzipActions {
       try {
         await fsPromises.access(futureFilePath);
 
-        throw new Error("\nOperation failed");
+        throw new Error(this.errorMessage);
       } catch (error) {
-        if (error.message === "\nOperation failed") {
+        if (error.message === this.errorMessage) {
           console.log(error.message);
 
           return;
@@ -76,11 +80,9 @@ export class GzipActions {
 
         await pipeline(readStream, decompressBrotli, writeStream);
 
-        console.log("Success decompress");
-
         await rm(pathToCompressFile);
       } catch (error) {
-        throw new Error("\nOperation failed");
+        throw new Error(this.errorMessage);
       }
     } catch (error) {
       if (error instanceof Error) {

@@ -1,10 +1,10 @@
 import * as nodePath from "path";
 
 function extractStrings(str) {
-  const regex = /"([^"]*)"|'([^']*)'/g;
+  const regex = /"([^"]*)"|'([^']*)'|`([^`]*)`/g;
   const matches = str.match(regex);
 
-  return matches.map((match) => match.replace(/"/g, ""));
+  return matches.map((match) => match.replace(/["'`]/g, ""));
 }
 
 function singleQuotePath(path) {
@@ -120,6 +120,8 @@ export default function pathResolver(path) {
 
       if ((isPathHasQuote && coutesCount === 4) || !isPathHasQuote) {
         if (coutesCount === 4) {
+          console.log("4 quotes");
+
           const [pathOne, pathTwo] = extractStrings(path);
 
           return [pathOne, pathTwo].map((path) => {
@@ -150,7 +152,7 @@ export default function pathResolver(path) {
         return singleQuotePath(path);
       }
     } catch (error) {
-      throw new Error("\nInvalid input\n");
+      throw new Error("\nInvalid input");
     }
   } catch (error) {
     if (error instanceof Error) {
