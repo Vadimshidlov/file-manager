@@ -102,8 +102,6 @@ export default class AppController {
 
       await this.fsActions.cat(toPath);
 
-      // this.fsActions.sayWhereAmI();
-
       return;
     }
 
@@ -171,7 +169,6 @@ export default class AppController {
       }
 
       const [pathToFile, newPathToFile] = params;
-      // const [pathToFile, newPathToFile] = pathResolver(command);
 
       await (async () => {
         await this.fsActions.cp(pathToFile, newPathToFile);
@@ -199,7 +196,6 @@ export default class AppController {
       }
 
       const [pathToFile, newPathToFile] = params;
-      // const [pathToFile, newPathToFile] = pathResolver(command);
 
       await (async () => {
         await this.fsActions.mv(pathToFile, newPathToFile);
@@ -211,7 +207,6 @@ export default class AppController {
     }
 
     if (command.startsWith("rm")) {
-      //!
       const params = pathResolver(command);
 
       if (!Array.isArray(params)) {
@@ -221,7 +216,6 @@ export default class AppController {
       }
 
       const [pathToFile] = params;
-      // const [pathToFile] = pathResolver(command);
 
       await (async () => {
         await this.fsActions.rm(pathToFile);
@@ -248,7 +242,6 @@ export default class AppController {
       }
 
       const [pathToFile, pathToCompressFIle] = params;
-      // const [pathToFile, pathToCompressFIle] = pathResolver(command);
 
       await (async () => {
         await this.gzipActions.compress(pathToFile, pathToCompressFIle);
@@ -276,7 +269,6 @@ export default class AppController {
       }
 
       const [pathToFile, pathToCompressFIle] = params;
-      // const [pathToFile, pathToCompressFIle] = pathResolver(command);
 
       await (async () => {
         await this.gzipActions.decompress(pathToFile, pathToCompressFIle);

@@ -151,7 +151,7 @@ export default class FSActions {
         await fsPromises.rename(currentPath, futurePath);
       } catch (error) {
         if (error instanceof Error) {
-          console.log(error);
+          console.log(error.message);
         }
       }
     } catch (error) {
@@ -170,7 +170,6 @@ export default class FSActions {
       try {
         await fsPromises.access(pathToFile);
       } catch (error) {
-        console.log(1);
         throw Error("Operation failed\n");
       }
 

@@ -71,7 +71,6 @@ function singleQuotePath(path) {
       secondPathFirstQouteIndex - 1,
     );
 
-    console.log("Resolver cause 2");
     return [basicPath, quotesPath].map((path) => {
       if (!nodePath.isAbsolute(path)) {
         const convertToAbsolutePath = nodePath.join(process.cwd(), path);
@@ -120,8 +119,6 @@ export default function pathResolver(path) {
 
       if ((isPathHasQuote && coutesCount === 4) || !isPathHasQuote) {
         if (coutesCount === 4) {
-          console.log("4 quotes");
-
           const [pathOne, pathTwo] = extractStrings(path);
 
           return [pathOne, pathTwo].map((path) => {
